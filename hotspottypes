@@ -1,0 +1,212 @@
+
+/*
+class HotSpotAnimated extends HotSpot {
+  float value = 0;
+  float speed = 40;
+  
+  
+  void tickAnimation() {
+    if (speed != 0.) {
+      value += 1./speed;
+      if (value > 1.) {
+        value -= 1;
+      }
+    }
+  }
+  
+  void draw(){
+    tickAnimation();
+    pushMatrix();
+    stroke(255,40);
+    setMatrix();
+    hAnimate();
+    popMatrix();
+  }
+  
+}
+
+class HotSpotJoint extends HotSpotAnimated {
+  int activeJoint = SimpleOpenNI.SKEL_RIGHT_HAND;
+  
+
+}
+
+class HotSpotSequence extends HotSpotAnimated {
+  
+  float seqWidth = 0.25;
+  
+  public HotSpotSequence() {
+    super();
+    bright = color(255,100,100,200);
+    dim = color(255,100,100,100);
+  }
+  
+  void hAnimate() {
+    drawOutline();
+    drawSequence();
+  }
+  
+  void drawSequence() { 
+    pushMatrix();
+    makeDim();
+    stroke(255,50);
+    if(value>=seqWidth) {
+      translate(value*2-(1+seqWidth),0,0);
+      box(seqWidth*2,2,2);
+    } else {
+      pushMatrix();
+      translate(value-1,0,0);
+      box(value*2,2,2);
+      popMatrix();
+      translate(1-(seqWidth-value),0,0);
+      box((seqWidth-value)*2,2,2);
+    }
+    popMatrix();
+  }
+  
+  boolean foundMass(PVector p) {
+    pushStyle();
+    PVector m = translateToModel(p);
+    stroke(dim);
+    if(abs(m.x)>0.9 || abs(m.y)>0.9 || abs(m.z)>0.9) {
+      stroke(bright);
+    }
+    if(isInSeq(m)) {
+      stroke(255,100);
+      mass++;
+    }
+    point(p.x,p.y,p.z);
+    popStyle();
+    return true;
+  }
+  
+  boolean isInSeq(PVector p) {
+    float x = map(p.x,-1,1,0,1);
+    //print(x); println(value);
+    if((x>(value-seqWidth) && x<(value)) || ((x-1)>(value-seqWidth) && (x-1)<(value)))  {
+    //if(p.x>(value*2-(1+seqWidth)) && p.x<(value*2-(1-seqWidth))) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+class HotSpotSequencer extends HotSpotSequence {
+  ArrayList<PVector> seq = new ArrayList();
+  
+  public void init(int n) {
+    seq = new ArrayList();
+    for(int i=0; i<8; i++) {
+      PVector p = new PVector((2./n)*i-1+(1./n),random(-1,1),random(-1,1)); 
+      seq.add(p);   
+    }
+    seqWidth = 0.0125;
+    speed=700;
+    //seqWidth = 1./n;
+  }
+
+  void hAnimate() {
+    //drawCore();
+    drawOutline();
+    makeDim();
+    drawSequence();
+    pushStyle();
+    strokeWeight(0.1);
+    for(int i=166; i<seq.size(); i++){
+      line(i*2./seq.size()-1, 1, 1, i*2./seq.size()-1, -1, 1);
+      line(i*2./seq.size()-1, 1, -1, i*2./seq.size()-1, -1, -1);
+      line(i*2./seq.size()-1, 1, 1, i*2./seq.size()-1, 1, -1);
+      line(i*2./seq.size()-1, -1, 1, i*2./seq.size()-1, -1, -1);      
+    }
+    for(PVector p : seq) {
+      float b = 0;
+      if (isPointWithin(p)) {
+        if(!isInSeq(p)) {
+          b=0.2;
+          strokeWeight(1);
+        } else {
+          strokeWeight(3);
+          b=0.5;
+        }
+        stroke(255,30);
+        
+        line(p.x, 1, 1, p.x, -1, 1);
+        line(p.x, 1, -1, p.x, -1, -1);
+        line(p.x, 1, 1, p.x, 1, -1);
+        line(p.x, -1, 1, p.x, -1, -1); 
+        
+        drawPointAt(p,b);
+      }
+    }
+    popStyle();
+  }
+    
+  boolean isInSeq(PVector p) {
+    
+    float x = map(p.x,-1,1,0,1);
+    float nodeWidth = 0.5/seq.size();
+    
+    //print(x); println(value);
+    if((x>(value-nodeWidth) && x<(value+nodeWidth)) || ((x-1)>(value-nodeWidth) && (x-1)<(value+nodeWidth)))  {
+    //if(p.x>(value*2-(1+seqWidth)) && p.x<(value*2-(1-seqWidth))) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+
+class HotSpotFillSequence extends HotSpotSequence {
+  
+  void hAnimate() {
+    drawCore();
+    drawOutline();
+    drawSequence();
+  }
+  
+  void drawSequence() {
+    makeBright();
+    pushMatrix();
+    translate(1-value,0,0);
+    box(2*value,2,2);
+    popMatrix();
+  }
+}
+
+class HotSpotKeys extends HotSpot {
+  int numKeys=13;
+  
+  void hAnimate() {
+    drawCore();
+    drawOutline();
+    drawKeys();
+    
+  }
+  
+  void drawKeys() {
+    pushMatrix();
+    scale(2./numKeys,1,1);
+    translate((numKeys+1)/-2.,0,0);
+    for(int k=0;k<numKeys;k++){
+      //pushMatrix();
+      translate(1,0,0);
+      if(isActive) {
+        
+      } else {
+        switch(k%12) {
+          case 1: case 3: case 6: case 8: case 10:
+            fill(0,20);
+            break;
+          default:
+            //fill(255,20);
+            noFill();
+        }
+      }
+      box(0.99,1.99,1.99);
+    }
+    popMatrix();
+  }
+}
+*/
