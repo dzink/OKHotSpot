@@ -19,4 +19,15 @@ class OKBehavior {
   void report() {
     println("hello!");
   }
+  
+  void update() {
+  }
+  
+  boolean isMassDetect() {
+    return false;
+  }
+  
+  boolean isJointTrack() {
+    return false;
+  }
 }

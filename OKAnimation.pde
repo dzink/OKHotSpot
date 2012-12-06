@@ -11,8 +11,12 @@ class OKAnimation extends OKBehavior {
     }
   }
   
-  void bDraw() {
+  void update() {
     tickAnimation();
+  }
+  
+  void bDraw() {
+   
   }
   
   void setSpeed(float s) {
@@ -33,12 +37,11 @@ class OKScanner extends OKAnimation {
     strokeWeight(1);
     stroke(255);
     drawMesh(value);
-    if(value>sWidth) {
+    if(value>=sWidth) {
       drawMesh(value-sWidth);
     }else {
       drawMesh(value-sWidth+1.);
     }
-    tickAnimation();
     popStyle();
   }
   
@@ -65,8 +68,27 @@ class OKScanner extends OKAnimation {
     }else {
       return (n>=(1+value-sWidth) || n<=(value));
     }
+  }  
+}
+
+class OKBackForthScanner extends OKScanner {
+
+  public OKBackForthScanner() {
+    value = 0.5 + sWidth/2.;
   }
   
+  void tickAnimation() {
+    if (speed != 0.) {
+      value += 1./speed;
+      if (value > 1.) {
+        value = 1;
+        speed = -speed;
+      }
+      if (value < sWidth) {
+        value = sWidth;
+        speed = -speed;
+      }
+    }
+  }
 
-  
 }

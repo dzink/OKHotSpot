@@ -12,7 +12,7 @@ class OKHotSpotContext extends SimpleOpenNI {
   PVector[] back;
   int[] userMap;
   IntVector userList = new IntVector();
-  int pointDistance = 9;
+  int pointDistance = 1;
   
   color[] userColors = { color(255,0,0), color(0,120,255), color(255,255,0), color(255,255,0), color(120,0,255), color(0,255,255) };
 
@@ -22,7 +22,7 @@ class OKHotSpotContext extends SimpleOpenNI {
 
   PVector cameraPosition = new PVector(0,0,-1100);
   PVector cameraRotation = new PVector(0,0,0);
-  float cameraZoom = -1100;
+  float cameraZoom = -1800;
   
   public OKHotSpotContext(processing.core.PApplet parent) {
     super(parent);
@@ -38,9 +38,6 @@ class OKHotSpotContext extends SimpleOpenNI {
     setMirror(true);
     setSmoothingSkeleton(0.9);
     //hint(DISABLE_DEPTH_TEST); 
-    camera(0,0,0, // eyeX, eyeY, eyeZ
-      0,0,1100, // centerX, centerY, centerZ
-      0.0,-1.0, 0.0); // upX, upY, upZ*/ 
   }
   
   void initOSCP5() {
@@ -54,9 +51,10 @@ class OKHotSpotContext extends SimpleOpenNI {
     rgbImage = rgbImage();
     depthPoints = depthMapRealWorld();
     userMap = getUsersPixels(SimpleOpenNI.USERS_ALL);
-    drawHotSpots();
+    updateHotSpots();
     makeScene();
     userUpdate();
+    drawHotSpots();    
     sendMessages();
   }
   
@@ -64,6 +62,12 @@ class OKHotSpotContext extends SimpleOpenNI {
     //selfRef[0] = this;
     //hot.setContext(selfRef);
     hotspots.add(hot); 
+  }
+
+  void updateHotSpots() {
+    for(OKHotSpot hot : hotspots) {
+      hot.update();
+    }
   }
   
   void drawHotSpots() {
@@ -77,7 +81,7 @@ class OKHotSpotContext extends SimpleOpenNI {
       hot.clearMass();
     }
     pushStyle();
-    strokeWeight(4);
+    strokeWeight(1);
 
    
     boolean drawnFlag;
@@ -105,7 +109,7 @@ class OKHotSpotContext extends SimpleOpenNI {
         if (!drawnFlag) {
           
           //stroke(lerpColor(color(rgbImage.pixels[i]), color(255), 0.10),255);
-          stroke(mixUserColorWith(userMap[i],rgbImage.pixels[i],0.25));
+          stroke(mixUserColorWith(userMap[i],rgbImage.pixels[i],0.85));
           point(currentPoint.x, currentPoint.y, currentPoint.z);
           
         }
@@ -132,11 +136,17 @@ class OKHotSpotContext extends SimpleOpenNI {
         getJointPositionSkeleton(userID, SimpleOpenNI.SKEL_TORSO, torso);      
         if(c==0) {
           camera(torso.x+cameraPosition.x,torso.y+cameraPosition.y,torso.z+cameraPosition.z, // eyeX, eyeY, eyeZ
-            torso.x,torso.y,torso.z, // centerX, centerY, centerZ
+            torso.x,torso.y,torso.z,
+
             0.0,-1.0, 0.0); // upX, upY, upZ*/
         }
       }
       c++;
+    }
+    if (c==0) {
+      camera(cameraPosition.x,cameraPosition.y,cameraPosition.z, // eyeX, eyeY, eyeZ
+            0,0,1100, // centerX, centerY, centerZ
+            0.0,-1.0, 0.0); // upX, upY, upZ*/
     }
   }  
   

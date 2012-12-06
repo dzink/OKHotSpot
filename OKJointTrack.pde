@@ -30,4 +30,8 @@ class OKJointTrack extends OKBehavior {
     hotspot = o;
     hotspot.addJointTrack(this);
   }
+  
+  boolean isJointTrack() {
+    return true;
+  }
 }

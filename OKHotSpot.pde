@@ -51,7 +51,7 @@ class OKHotSpot
  
   void recalcMatrix() {
     matrix.reset();
-    matrix.scale(-1,1,1);
+    //matrix.scale(1,1,1);
     matrix.translate(position.x,position.y,position.z);
     matrix.rotateX(rotation.x);
     matrix.rotateY(rotation.y);
@@ -120,6 +120,12 @@ class OKHotSpot
     rotateY(rotation.y);
     rotateZ(rotation.z);
     scale(scaling.x,scaling.y,scaling.z);*/
+  }
+  
+  void update() {
+    for(OKBehavior b : behaviors) {
+      b.update();
+    }
   }
   
   void draw(){
@@ -335,19 +341,40 @@ class OKHotSpot
   
   void addBehavior(OKBehavior b) {
     b.addParentHotSpot(this);
+    if(b.isMassDetect()) addMassDetect((OKMassDetect) b);
+    //if(b.isJointTrack()) addJointTrack(b);
     behaviors.add(b);
   }
 
-  void addMassDetect(OKMassDetect b) {
+  private void addMassDetect(OKMassDetect b) {
     massDetect.add(b);
-    addBehavior(b);    
   }
 
   void addJointTrack(OKJointTrack b) {
     jointTrack.add(b);
-    addBehavior(b);    
   }
-    
+
+  PVector getScaling() {
+    return scaling;
+  }
+  
+  PVector getPosition() {
+    return position;
+  }
+  
+  PVector getMinBound() {
+    return minBound;
+  }
+  
+  PVector getMaxBound() {
+    return maxBound;
+  }
+  
+  void invertMatrix() {
+    applyMatrix(imatrix);
+  }
+  
+  
 }
 
 

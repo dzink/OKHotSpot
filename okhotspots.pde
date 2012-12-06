@@ -5,29 +5,24 @@ void setup() {
   context = new OKHotSpotContext(this);
   
   OKHotSpot hot = new OKHotSpot();
-  hot.hResize(-200,200,200);
-  hot.hTranslate(0,0,1800);
-  //hot.hRotate(0,0,radians(90));
-  //hot.init(8);
-  /*hot.trackJoint(SimpleOpenNI.SKEL_LEFT_HAND);
-  hot.trackJoint(SimpleOpenNI.SKEL_LEFT_ELBOW);
-  hot.trackJoint(SimpleOpenNI.SKEL_RIGHT_HAND);
-  hot.trackJoint(SimpleOpenNI.SKEL_RIGHT_ELBOW);
-  hot.trackJoint(SimpleOpenNI.SKEL_LEFT_HIP);
-  hot.trackJoint(SimpleOpenNI.SKEL_RIGHT_HIP);
-  hot.trackJoint(SimpleOpenNI.SKEL_TORSO);
-  hot.trackJoint(SimpleOpenNI.SKEL_HEAD);*/
-
-  
-  OKMassEdge masse = new OKMassEdge();
-  hot.addMassDetect(masse);
+  hot.hResize(600,600,600);
+  hot.hTranslate(200,0,1800);
+  hot.hRotate(0,radians(90),radians(90));
     
-  OKScanner scan = new OKScanner();
+  OKBackForthScanner scan = new OKBackForthScanner();
   hot.addBehavior(scan);
 
   OKMassScanner mass = new OKMassScanner();
   mass.setScanner(scan);
-  hot.addMassDetect(mass);
+  hot.addBehavior(mass);
+  mass.enableStats();
+
+
+  OKMassEdge masse = new OKMassEdge();  
+  hot.addBehavior(masse);
+
+  OKMassDetect mdetect = new OKMassDetect();  
+  hot.addBehavior(mdetect);
   
   context.addHotSpot(hot);
   
