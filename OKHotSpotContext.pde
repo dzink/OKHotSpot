@@ -12,9 +12,9 @@ class OKHotSpotContext extends SimpleOpenNI {
   PVector[] back;
   int[] userMap;
   IntVector userList = new IntVector();
-  int pointDistance = 1;
+  int pointDistance = 12;
   
-  color[] userColors = { color(255,0,0), color(0,120,255), color(255,255,0), color(255,255,0), color(120,0,255), color(0,255,255) };
+  color[] userColors = { color(0,255,255), color(120,255,0), color(255,120,0), color(0,120,255), color(255,255,0), color(120,0,255) };
 
 
   OscP5 oscP5;
@@ -36,7 +36,7 @@ class OKHotSpotContext extends SimpleOpenNI {
     alternativeViewPointDepthToImage();
     enableUser(SimpleOpenNI.SKEL_PROFILE_ALL);
     setMirror(true);
-    setSmoothingSkeleton(0.9);
+    setSmoothingSkeleton(0.3);
     //hint(DISABLE_DEPTH_TEST); 
   }
   
@@ -122,8 +122,13 @@ class OKHotSpotContext extends SimpleOpenNI {
   void sendMessages() {
     for(OKHotSpot hot : hotspots) {
       //oscP5.send(hot.sendOSC(), myRemoteLocation);
+      hot.sendMessages();
 
     }
+  }
+  
+  IntVector getUserList() {
+    return userList;
   }
   
   void userUpdate() {

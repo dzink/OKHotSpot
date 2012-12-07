@@ -128,6 +128,12 @@ class OKHotSpot
     }
   }
   
+  void sendMessages() {
+    for(OKBehavior b : behaviors) {
+      b.sendMessages();
+    }
+  }
+  
   void draw(){
     pushMatrix();
     stroke(255,10);
@@ -374,7 +380,67 @@ class OKHotSpot
     applyMatrix(imatrix);
   }
   
+  void overlayText(String ot, float x, float y, float z) {
+    pushStyle();
+    hint(DISABLE_DEPTH_TEST);
+    pushMatrix();
+    faceFront(x,y,z);
+    textAlign(RIGHT,TOP);
+    textSize(64);    
+    text(ot,0,0,0);
+    popMatrix();
+    hint(ENABLE_DEPTH_TEST);
+    popStyle();
+  }
+  
+  void overlayEllipse(float r, float x, float y, float z) {
+    pushStyle();
+    hint(DISABLE_DEPTH_TEST);
+    pushMatrix();
+    faceFront(x,y,z);
+    ellipse(0,0,r,r);
+    popMatrix();
+    hint(ENABLE_DEPTH_TEST);
+    popStyle();
+  }
+  
+  void faceFront(float x, float y, float z) {
+    translate(x,y,z);
+    scale(1,-1,1);
+    invertMatrix();
+    translate(position.x,position.y,position.z);
+  }
+  
+  void overlayText(float ot, float x, float y, float z) {
+    overlayText(Float.toString(ot),x,y,z);
+  }
+  
   
 }
 
 
+// Everything is a hotspot - overrides a number of location and rotation-specific things.
+class OKGlobalHotSpot extends OKHotSpot {
+  void setMatrix() {
+  }
+  
+  void draw() {
+    for(OKBehavior b : behaviors) {
+      b.bDraw();
+    }
+  }
+  
+  boolean isFastPointWithin(PVector p) {
+    return true;
+  }
+  
+  // uses the hotspot coordinates to see if a point is in the box
+  boolean isPointWithin(PVector p) {
+    return true;
+  }
+
+  boolean isPointWithinEdge(PVector p, float edge) {
+    return false;
+  }
+  
+}

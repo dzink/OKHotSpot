@@ -7,15 +7,25 @@ void setup() {
   OKHotSpot hot = new OKHotSpot();
   hot.hResize(600,600,600);
   hot.hTranslate(200,0,1800);
-  hot.hRotate(0,radians(90),radians(90));
+  //hot.hRotate(0,radians(90),radians(0));
     
-  OKBackForthScanner scan = new OKBackForthScanner();
-  hot.addBehavior(scan);
-
+  /*OKBackForthScanner scan = new OKBackForthScanner();
+  //hot.addBehavior(scan);
   OKMassScanner mass = new OKMassScanner();
   mass.setScanner(scan);
   hot.addBehavior(mass);
   mass.enableStats();
+  mass.addMessage("scannerMass");*/
+
+  
+  /*OKJointTrack joint = new OKJointTrack(1,OKHotSpotContext.SKEL_RIGHT_HAND);
+  joint.addJoint(1,OKHotSpotContext.SKEL_LEFT_HAND);
+  joint.enableStats();
+  hot.addBehavior(joint);*/
+
+  OKJointPairTrack joint2 = new OKJointPairTrack(1,OKHotSpotContext.SKEL_RIGHT_HAND,1,OKHotSpotContext.SKEL_RIGHT_SHOULDER);
+  hot.addBehavior(joint2);
+  
 
 
   OKMassEdge masse = new OKMassEdge();  
@@ -25,9 +35,6 @@ void setup() {
   hot.addBehavior(mdetect);
   
   context.addHotSpot(hot);
-  
-  sphereDetail(5);
-  ambientLight(255,255,255);
 }
 
 void draw() {
