@@ -123,6 +123,7 @@ class OKHotSpotContext extends SimpleOpenNI {
   
   void addMessage(OscMessage m) {
     messages.add(m);
+    //println(m);
   }
   
   void sendMessages() {
@@ -136,7 +137,7 @@ class OKHotSpotContext extends SimpleOpenNI {
         o.add(tokens);
       }
       b.add(o);
-
+      println(o);
     }
     oscP5.send(b, myRemoteLocation);
   }

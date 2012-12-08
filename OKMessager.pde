@@ -1,7 +1,7 @@
-class OKMessage {
-  String symbol;
+class OKMessager {
+  String symbol = "OscMessage";
   
-  public OKMessage(String s){
+  public OKMessager(String s){
     symbol = s;
   }
   
@@ -24,31 +24,48 @@ class OKMessage {
   }
   
   boolean matchMessage(String s) {
-    return (symbol ==s);
+    //println("Does " + s + " match " + symbol);
+    return (symbol.equals(s));
+  }
+  
+  void report() {
+    println("New OKMessager: " + symbol);
+  }
 }
 
-class OKJointMessager {
+class OKJointMessager extends OKMessager {
   // xpos, ypos, zpos, dxpos, dypos, dzpos, confidence
   
-  PVector current = new OKJoint();
-  PVector last;
+  OKJoint current = new OKJoint();
+  OKJoint last;
+  
+  public OKJointMessager(String s) {
+    super(s);
+  }
   
   void update(OKJoint j) {
     if (j!=null) {
       OscMessage m = new OscMessage(symbol);
-      v = j.getVector();
-      m.add(v.x,v.y,v.z);
+      PVector v = j.getVector();
+      m.add(new float[] {v.x,v.y,v.z});
       if(last == null)  {
         sendOnMessage();
-        m.add(0.,0.,0.);
+        m.add(new float[] {0.,0.,0.});
       } else {
-        l = last.getVector();
-        m.add(l.x-v.x,l.y-v.y,l.z-v.z);
+        PVector l = last.getVector();
+        println(last.getUserID());
+        println(l);
+        m.add(new float[] {l.x-v.x,l.y-v.y,l.z-v.z});
       }
+      last = j.get();//new OKJoint(new PVector(v.x,v.y,v.z), j.getUserID(), j.getJointId(), j.getConfidence());
       context.addMessage(m);
     } else if (last != null) {
+      last = null;
       sendOffMessage();
     }
+  }
+  
+  void update() {
   }
 }
   

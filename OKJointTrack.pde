@@ -25,7 +25,11 @@ class OKJoint {
   }
   
   OKJoint get() {
-    return new OKJoint(jointv,userID,jointID,confidence);
+    if (jointv != null) {
+      return new OKJoint(jointv.get(),userID,jointID,confidence);
+    } else {
+      return null;
+    }
   }
   
   PVector getVector() {
@@ -59,7 +63,7 @@ class OKJointTrack extends OKBehavior {
   //int[] jointID = {OKHotSpotContext.SKEL_RIGHT_HAND};
   ArrayList<OKJoint> jointSearch = new ArrayList();
   ArrayList<OKJoint> joints = new ArrayList();
-  ArrayList<OKJointMessager> messages = new ArrayList();
+  //ArrayList<OKJointMessager> messages = new ArrayList();
   String symbol = "JointTrack";
 
   public OKJointTrack() {
@@ -69,14 +73,9 @@ class OKJointTrack extends OKBehavior {
     symbol = s;
     addJoint(u,j);
   }
-
-  OKJoint findMessage(int u, int j) {
-    for (OKJointMessager m : messages) {
-      if (m.matchMessage(u,j)) {
-        return m;
-      }
-    }
-    return null;
+  
+  OKJoint findJoint(OKJoint j) {
+    return findJoint(j.getUserID(), j.getJointID());
   }
   
   OKJoint findJoint(int u, int j) {
@@ -88,13 +87,15 @@ class OKJointTrack extends OKBehavior {
     return null;
   }
   
-  OKJointMessages findJointMessager(OKJoint j) {
+  OKMessager findJointMessager(OKJoint j) {
     String s = getSymbol(j.getUserID(), j.getJointID());
-    for (OKJointMessager m : messages) {
-      if (m.symbol == s) {
+    //println("searching for " + s);
+    for (OKMessager m : messages) {
+      if (m.matchMessage(s)) {
         return m;
       }
     }
+    return null;
   }
   
   String getSymbol(int u, int j) {
@@ -102,8 +103,8 @@ class OKJointTrack extends OKBehavior {
   }
   
   void addJoint(int u, int j) {
-    jt = new OKJoint(u,j);
-    jt.addMessage(getSymbol(u,j));
+    OKJoint jt = new OKJoint(u,j);
+    addMessage(new OKJointMessager(getSymbol(u,j)));
     jointSearch.add(jt);
   }
   
@@ -150,7 +151,14 @@ class OKJointTrack extends OKBehavior {
       if (hotspot.isPointWithin(j)) {
         OKJoint okj = new OKJoint(j, userID, jointID, confidence);
         joints.add(okj);
-        findJointMessager(okj).update(okj);
+        OKJointMessager m = (OKJointMessager) findJointMessager(okj);
+        //OKMessager m = findJointMessager(okj);
+        //println(m);
+        if (m != null) { 
+          //println("found messager");
+          m.update(okj);
+          //m.update();
+        }
         //joints.add(okj);
         return;
       }

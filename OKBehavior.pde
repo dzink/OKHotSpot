@@ -1,7 +1,7 @@
 class OKBehavior {
   
   OKHotSpot hotspot;
-  ArrayList<OKMessage> messages = new ArrayList();
+  ArrayList<OKMessager> messages = new ArrayList();
   String oscSymbol = "oscCommand";
   boolean showStats = false;
   int mass = 0;
@@ -37,6 +37,11 @@ class OKBehavior {
   }
   
   void addMessage(String symbol) {
+  }
+
+  void addMessage(OKMessager m) {
+    messages.add(m);
+    m.report();
   }
   
   void sendMessages() {

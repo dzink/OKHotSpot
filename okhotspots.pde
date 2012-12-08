@@ -18,13 +18,13 @@ void setup() {
   mass.addMessage("scannerMass");*/
 
   
-  /*OKJointTrack joint = new OKJointTrack(1,OKHotSpotContext.SKEL_RIGHT_HAND);
+  OKJointTrack joint = new OKJointTrack("Theremooo",1,OKHotSpotContext.SKEL_RIGHT_HAND);
   joint.addJoint(1,OKHotSpotContext.SKEL_LEFT_HAND);
   joint.enableStats();
-  hot.addBehavior(joint);*/
+  hot.addBehavior(joint);
 
-  OKJointPairTrack joint2 = new OKJointPairTrack(1,OKHotSpotContext.SKEL_RIGHT_HAND,1,OKHotSpotContext.SKEL_RIGHT_SHOULDER);
-  hot.addBehavior(joint2);
+  /*OKJointPairTrack joint2 = new OKJointPairTrack(1,OKHotSpotContext.SKEL_RIGHT_HAND,1,OKHotSpotContext.SKEL_RIGHT_SHOULDER);
+  hot.addBehavior(joint2);*/
   
 
 
