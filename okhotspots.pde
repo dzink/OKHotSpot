@@ -4,10 +4,10 @@ void setup() {
   size(940, 680, OPENGL);
   context = new OKHotSpotContext(this);
   
-  OKHotSpot hot = new OKHotSpot();
+  OKHotSpotSphere hot = new OKHotSpotSphere();
   hot.hResize(600,600,600);
   hot.hTranslate(200,0,1800);
-  //hot.hRotate(0,radians(90),radians(0));
+  hot.hRotate(0,radians(90),radians(0));
     
   /*OKBackForthScanner scan = new OKBackForthScanner();
   //hot.addBehavior(scan);

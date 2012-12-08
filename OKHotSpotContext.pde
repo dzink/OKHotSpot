@@ -13,12 +13,16 @@ class OKHotSpotContext extends SimpleOpenNI {
   int[] userMap;
   IntVector userList = new IntVector();
   int pointDistance = 12;
+  float cloudWeight = 2;
+  boolean fullOscMessage = false;
   
   color[] userColors = { color(0,255,255), color(120,255,0), color(255,120,0), color(0,120,255), color(255,255,0), color(120,0,255) };
 
 
   OscP5 oscP5;
   NetAddress myRemoteLocation;
+
+  ArrayList<OscMessage> messages = new ArrayList();
 
   PVector cameraPosition = new PVector(0,0,-1100);
   PVector cameraRotation = new PVector(0,0,0);
@@ -47,6 +51,7 @@ class OKHotSpotContext extends SimpleOpenNI {
   
   void updateKinectOSC() {
     //println(frameRate);
+    messages.clear();
     update();
     rgbImage = rgbImage();
     depthPoints = depthMapRealWorld();
@@ -81,11 +86,10 @@ class OKHotSpotContext extends SimpleOpenNI {
       hot.clearMass();
     }
     pushStyle();
-    strokeWeight(1);
+    strokeWeight(cloudWeight);
 
    
     boolean drawnFlag;
-    // clear out hotspot scenes
     for (int i = 0; i < depthPoints.length; i+=pointDistance) {
       PVector currentPoint = depthPoints[i];
       if (userMap[i] >0) {
@@ -96,8 +100,6 @@ class OKHotSpotContext extends SimpleOpenNI {
             if(masses.size() > 0) {
               PVector modelPoint = hot.translateToModel(currentPoint);
               for(OKMassDetect m : masses) {
-                //m.report();
-                //println(modelPoint.x);
                 if(m.checkMass(modelPoint, rgbImage.pixels[i], userMap[i]) && !drawnFlag) {
                   m.drawMass(currentPoint, rgbImage.pixels[i], userMap[i]);
                   drawnFlag = true;
@@ -119,12 +121,24 @@ class OKHotSpotContext extends SimpleOpenNI {
     popStyle();
   }
   
+  void addMessage(OscMessage m) {
+    messages.add(m);
+  }
+  
   void sendMessages() {
-    for(OKHotSpot hot : hotspots) {
+    OscBundle b = new OscBundle();
+    for(OscMessage o : messages) {
       //oscP5.send(hot.sendOSC(), myRemoteLocation);
-      hot.sendMessages();
+      //hot.sendMessages();
+      if(!fullOscMessage) {
+        String[] tokens = o.addrPattern().split("[/]+");
+        o.setAddrPattern(tokens[0]);
+        o.add(tokens);
+      }
+      b.add(o);
 
     }
+    oscP5.send(b, myRemoteLocation);
   }
   
   IntVector getUserList() {
@@ -204,6 +218,17 @@ class OKHotSpotContext extends SimpleOpenNI {
     return lerpColor(getUserColor(userID),mix,amount);
   }
 
+  void setCloudWeight(float w) {
+    cloudWeight = w;
+  }
+  
+  void increaseCloudWeight() {
+    cloudWeight += 0.5;
+  }
+
+  void decreaseCloudWeight() {
+    cloudWeight -= 0.5;
+  }
 
 }   
 
@@ -232,6 +257,7 @@ void onStartPose(String pose, int userId) {
 }
 
 void keyPressed() {
+  println("keycode: " + keyCode);
   switch (keyCode) {
     case 37: case 100:  // left
       context.cameraLeft();
@@ -250,9 +276,12 @@ void keyPressed() {
     break;
     case 34: case 99:
       context.cameraZoomOut();
+      break;
+    case 61: case 107:
+      context.increaseCloudWeight();
+    break;
+    case 45: case 109:
+      context.decreaseCloudWeight();
     break;
   }
-
-  
 }
-

@@ -444,3 +444,33 @@ class OKGlobalHotSpot extends OKHotSpot {
   }
   
 }
+
+class OKHotSpotSphere extends OKHotSpot {
+  float distanceFromOrigin(PVector p) {
+    return p.mag();
+  }
+  
+  boolean isPointWithin(PVector p) {
+    return (abs(p.mag())<=1.);
+  }
+
+  boolean isPointWithinEdge(PVector p, float edge) {
+    return (abs(p.mag())>=edge);
+  }
+  
+  void drawOutline() {
+    //core
+    pushStyle();
+    if(isActive) {
+      fill(0,20);
+    } else {
+      fill(0,20);
+    }
+    //noFill();
+    noFill();
+    stroke(255,50);
+    strokeWeight(2);
+    sphere(2);
+    popStyle();
+  }
+}

@@ -2,7 +2,7 @@ class OKBehavior {
   
   OKHotSpot hotspot;
   ArrayList<OKMessage> messages = new ArrayList();
-
+  String oscSymbol = "oscCommand";
   boolean showStats = false;
   int mass = 0;
     
