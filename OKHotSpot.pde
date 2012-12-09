@@ -30,9 +30,9 @@ class OKHotSpot
     position = new PVector();
     scaling = new PVector();
     rotation = new PVector();
-    hResize(1);
-    hRotate(0,0,0);
-    hTranslate(0,0,0);
+    setSize(1);
+    setRotation(0,0,0);
+    setPosition(0,0,0);
     //hColor=color(0,169,200,19);
   }
   
@@ -42,7 +42,7 @@ class OKHotSpot
     context = c[0];
   }*/
   
-  void hResize(float nx) {
+  void setSize(float nx) {
     scaling.set(nx,nx,nx);
   }
   void init(int n) {
@@ -87,24 +87,25 @@ class OKHotSpot
   }
  
   
-  void hResize(float nx, float ny, float nz) {
+  void setSize(float nx, float ny, float nz) {
     scaling.set(nx,ny,nz);
     recalcMatrix();
   }
 
-  void hRotate(float ny) {
+  void setRotation(float ny) {
     rotation.set(0,ny,0);
     recalcMatrix();
   }
   
-  void hRotate(float nx, float ny, float nz) {
+  void setRotation(float nx, float ny, float nz) {
     rotation.set(nx,ny,nz);
     recalcMatrix();
   }
 
-  void hTranslate(float nx, float ny, float nz) {
+  void setPosition(float nx, float ny, float nz) {
      position.set(nx,ny,nz);
      recalcMatrix();
+     println("movin'");
   }
   
   void hAnimate() {
@@ -415,6 +416,9 @@ class OKHotSpot
     overlayText(Float.toString(ot),x,y,z);
   }
   
+  float massScaleForPosition(float n) {
+    return n*(position.z*position.z)/100000.;
+  }
   
 }
 

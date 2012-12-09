@@ -87,8 +87,8 @@ class OKJointTrack extends OKBehavior {
     return null;
   }
   
-  OKMessager findJointMessager(OKJoint j) {
-    String s = getSymbol(j.getUserID(), j.getJointID());
+  OKMessager findJointMessager(int u, int j) {
+    String s = getSymbol(u,j);
     //println("searching for " + s);
     for (OKMessager m : messages) {
       if (m.matchMessage(s)) {
@@ -148,19 +148,19 @@ class OKJointTrack extends OKBehavior {
       PVector j = new PVector();
       float confidence = context.getJointPositionSkeleton(userID, jointID, j);
       j = hotspot.translateToModel(j);
-      if (hotspot.isPointWithin(j)) {
+      OKJointMessager m = (OKJointMessager) findJointMessager(userID, jointID);
+      if (m != null) {
+       if (hotspot.isPointWithin(j)) {
         OKJoint okj = new OKJoint(j, userID, jointID, confidence);
         joints.add(okj);
-        OKJointMessager m = (OKJointMessager) findJointMessager(okj);
-        //OKMessager m = findJointMessager(okj);
-        //println(m);
         if (m != null) { 
-          //println("found messager");
           m.update(okj);
-          //m.update();
-        }
-        //joints.add(okj);
+        };
         return;
+        } else {
+          //OKJoint okj = new OKJoint(null, userID, jointID, confidence);
+          m.update(null);
+        }
       }
     }  
   }
@@ -221,6 +221,30 @@ class OKJointPairTrack extends OKJointTrack {
       PVector j2v = j2.getVector();
       line(j1v.x,j1v.y,j1v.z,j2v.x,j2v.y,j2v.z);
     } else {
+    }
+  }
+}
+
+class OKJointLeadHotSpot extends OKJointTrack {
+  OKHotSpot follow;
+
+  public OKJointLeadHotSpot(int u, int j) {
+    addJoint(u,j);
+  }
+
+  void setFollow(OKHotSpot f) {
+    follow = f;
+  }
+
+  void updateJoint(int userID, int jointID) {
+    if(context.isTrackingSkeleton(userID)) {
+      PVector j = new PVector();
+      float confidence = context.getJointPositionSkeleton(userID, jointID, j);
+      if (j != null) {
+        if (hotspot.isPointWithin(hotspot.translateToModel(j))) {
+          follow.setPosition(j.x,j.y,j.z);
+        }
+      }  
     }
   }
 }

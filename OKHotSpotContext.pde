@@ -132,9 +132,12 @@ class OKHotSpotContext extends SimpleOpenNI {
       //oscP5.send(hot.sendOSC(), myRemoteLocation);
       //hot.sendMessages();
       if(!fullOscMessage) {
+        Object[] args = o.arguments();
+        o.clearArguments();
         String[] tokens = o.addrPattern().split("[/]+");
         o.setAddrPattern(tokens[0]);
         o.add(tokens);
+        o.add(args);
       }
       b.add(o);
       println(o);

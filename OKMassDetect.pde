@@ -24,7 +24,7 @@ class OKMassDetect extends OKBehavior {
       
       fill(255);
       stroke(255);
-      hotspot.overlayText(String.format("mass: %,d\ndensity: %,d",mass,mass),1,-1.1,-1);
+      hotspot.overlayText(String.format("mass: %,d\ndensity: %2f",mass,hotspot.massScaleForPosition(mass)),1,-1.1,-1);
     }
   }
   

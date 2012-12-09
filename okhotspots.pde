@@ -4,10 +4,21 @@ void setup() {
   size(940, 680, OPENGL);
   context = new OKHotSpotContext(this);
   
-  OKHotSpotSphere hot = new OKHotSpotSphere();
-  hot.hResize(600,600,600);
-  hot.hTranslate(200,0,1800);
-  hot.hRotate(0,radians(90),radians(0));
+  OKHotSpot hot = new OKHotSpot();
+  hot.setSize(600,600,600);
+  hot.setPosition(200,0,1800);
+  //hot.setRotation(0,radians(90),radians(0));
+  context.addHotSpot(hot);
+  
+  OKHotSpot handme = new OKHotSpot();
+  handme.setSize(100,100,100);
+  handme.setPosition(200,0,1800);
+  context.addHotSpot(handme);
+  
+  OKJointLeadHotSpot lead = new OKJointLeadHotSpot(1,OKHotSpotContext.SKEL_RIGHT_HAND);
+  lead.setFollow(handme);
+  
+  hot.addBehavior(lead);
     
   /*OKBackForthScanner scan = new OKBackForthScanner();
   //hot.addBehavior(scan);
@@ -18,8 +29,8 @@ void setup() {
   mass.addMessage("scannerMass");*/
 
   
-  OKJointTrack joint = new OKJointTrack("Theremooo",1,OKHotSpotContext.SKEL_RIGHT_HAND);
-  joint.addJoint(1,OKHotSpotContext.SKEL_LEFT_HAND);
+  OKJointTrack joint = new OKJointTrack("Theremang",1,OKHotSpotContext.SKEL_RIGHT_HAND);
+  //joint.addJoint(1,OKHotSpotContext.SKEL_LEFT_HAND);
   joint.enableStats();
   hot.addBehavior(joint);
 
@@ -32,9 +43,9 @@ void setup() {
   hot.addBehavior(masse);
 
   OKMassDetect mdetect = new OKMassDetect();  
-  hot.addBehavior(mdetect);
+  mdetect.enableStats();
+  handme.addBehavior(mdetect);
   
-  context.addHotSpot(hot);
 }
 
 void draw() {

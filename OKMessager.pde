@@ -1,26 +1,41 @@
 class OKMessager {
   String symbol = "OscMessage";
+  String subSymbol = "";
   
   public OKMessager(String s){
     symbol = s;
   }
+
+  public OKMessager(String s, String ss){
+    symbol = s;
+    subSymbol = ss;
+  }
   
-  OscMessage sendOSC() {
-    OscMessage myMessage = new OscMessage("oscCommand");
-    //myMessage.add(mass);     
-    return myMessage;
+  OscMessage newMessage() {
+    OscMessage o = new OscMessage(symbol);
+    return o;
+  }
+
+  OscMessage newMessage(String s) {
+    OscMessage o = newMessage();
+    o.setAddrPattern(s);
+    return o;
+  }
+  
+  void sendMessage(OscMessage m) {
+    context.addMessage(m);
   }
   
   void sendOnMessage() {
-    OscMessage m = new OscMessage(symbol + "/noteOn");
+    OscMessage m = newMessage("/noteOn");
     m.add(1.);
-    context.addMessage(m);
+    //sendMessage(m);
   }
 
   void sendOffMessage() {
-    OscMessage m = new OscMessage(symbol + "/noteOff");
-    m.add(1.);
-    context.addMessage(m);
+    OscMessage m = newMessage("/noteOff");
+    m.add(0.);
+    //sendMessage(m);
   }
   
   boolean matchMessage(String s) {
@@ -45,7 +60,7 @@ class OKJointMessager extends OKMessager {
   
   void update(OKJoint j) {
     if (j!=null) {
-      OscMessage m = new OscMessage(symbol);
+      OscMessage m = newMessage("position");
       PVector v = j.getVector();
       m.add(new float[] {v.x,v.y,v.z});
       if(last == null)  {
@@ -58,7 +73,7 @@ class OKJointMessager extends OKMessager {
         m.add(new float[] {l.x-v.x,l.y-v.y,l.z-v.z});
       }
       last = j.get();//new OKJoint(new PVector(v.x,v.y,v.z), j.getUserID(), j.getJointId(), j.getConfidence());
-      context.addMessage(m);
+      sendMessage(m);
     } else if (last != null) {
       last = null;
       sendOffMessage();
