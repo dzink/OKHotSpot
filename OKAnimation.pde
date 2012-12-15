@@ -34,8 +34,8 @@ class OKScanner extends OKAnimation {
 
   void bDraw() {
     pushStyle();
-    strokeWeight(1);
-    stroke(255);
+    strokeWeight(0.01);
+    stroke(238,103,79);
     drawMesh(value);
     if(value>=sWidth) {
       drawMesh(value-sWidth);

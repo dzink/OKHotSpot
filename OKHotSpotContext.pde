@@ -12,11 +12,11 @@ class OKHotSpotContext extends SimpleOpenNI {
   PVector[] back;
   int[] userMap;
   IntVector userList = new IntVector();
-  int pointDistance = 12;
-  float cloudWeight = 2;
+  int pointDistance = 6;
+  float cloudWeight = 3;
   boolean fullOscMessage = false;
   
-  color[] userColors = { color(0,255,255), color(120,255,0), color(255,120,0), color(0,120,255), color(255,255,0), color(120,0,255) };
+  color[] userColors = { color(170,0), color(105,194,212), color(194,177,205), color(238,103,79), color(255,248,62), color(120,0,255) };
 
 
   OscP5 oscP5;
@@ -232,6 +232,10 @@ class OKHotSpotContext extends SimpleOpenNI {
 
   void decreaseCloudWeight() {
     cloudWeight -= 0.5;
+  }
+  
+  int getPointDistance() {
+    return pointDistance;
   }
 
 }   

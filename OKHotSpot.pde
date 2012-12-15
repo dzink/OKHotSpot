@@ -166,7 +166,7 @@ class OKHotSpot
     }
     //noFill();
     noFill();
-    stroke(255,50);
+    stroke(238,103,79);
     strokeWeight(2);
     box(2);
     popStyle();
@@ -417,7 +417,7 @@ class OKHotSpot
   }
   
   float massScaleForPosition(float n) {
-    return n*(position.z*position.z)/100000.;
+    return n*context.getPointDistance()*(position.z*position.z)/(scaling.x*scaling.y*scaling.z);
   }
   
 }

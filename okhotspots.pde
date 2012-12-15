@@ -5,7 +5,7 @@ void setup() {
   context = new OKHotSpotContext(this);
   
   OKHotSpot hot = new OKHotSpot();
-  hot.setSize(600,600,600);
+  hot.setSize(1200);
   hot.setPosition(200,0,1800);
   //hot.setRotation(0,radians(90),radians(0));
   context.addHotSpot(hot);
@@ -15,18 +15,18 @@ void setup() {
   handme.setPosition(200,0,1800);
   context.addHotSpot(handme);
   
-  OKJointLeadHotSpot lead = new OKJointLeadHotSpot(1,OKHotSpotContext.SKEL_RIGHT_HAND);
+  OKJointLeadHotSpot lead = new OKJointLeadHotSpot(0,OKHotSpotContext.SKEL_RIGHT_HAND);
   lead.setFollow(handme);
   
   hot.addBehavior(lead);
     
-  /*OKBackForthScanner scan = new OKBackForthScanner();
-  //hot.addBehavior(scan);
+  OKBackForthScanner scan = new OKBackForthScanner();
+  hot.addBehavior(scan);
   OKMassScanner mass = new OKMassScanner();
   mass.setScanner(scan);
   hot.addBehavior(mass);
   mass.enableStats();
-  mass.addMessage("scannerMass");*/
+  mass.addMessage("scannerMass");
 
   
   OKJointTrack joint = new OKJointTrack("Theremang",1,OKHotSpotContext.SKEL_RIGHT_HAND);
@@ -49,7 +49,7 @@ void setup() {
 }
 
 void draw() {
-  background(100);  
+  background(50);  
   context.updateKinectOSC(); 
 }
 
