@@ -105,7 +105,7 @@ class OKHotSpot
   void setPosition(float nx, float ny, float nz) {
      position.set(nx,ny,nz);
      recalcMatrix();
-     println("movin'");
+     //println("movin'");
   }
   
   void hAnimate() {

@@ -56,7 +56,7 @@ class OKMassEdge extends OKMassDetect {
   float edge = 0.95;
 
   public OKMassEdge(String s) {
-    addMessage(s);
+    addMessage(new OKMassMessager(s));
   }
   
   boolean checkMass(PVector p, color pixel, int userID) {
@@ -81,7 +81,9 @@ class OKMassScanner extends OKMassDetect {
   OKScanner scanner;
   
   public OKMassScanner(String s) {
-    addMessage(s);
+    addMessage(new OKMassMessager(s));
+    println("added new mass messager");
+    println(messages.size());
   }
   
   void setScanner(OKScanner s) {

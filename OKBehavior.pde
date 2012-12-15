@@ -35,9 +35,6 @@ class OKBehavior {
   boolean isJointTrack() {
     return false;
   }
-  
-  void addMessage(String symbol) {
-  }
 
   void addMessage(OKMessager m) {
     messages.add(m);

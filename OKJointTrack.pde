@@ -39,7 +39,7 @@ class OKJointTrack extends OKBehavior {
   void trackJoints() {
     joints.clear();
     for (OKMessager m : messages) {
-      OKJoint j = findJoint(((OKJointMessager) m).getJoint());
+      OKJoint j = findJoint(((OKJointMessager) m).getSingleJoint());
       if(j != null) {
         joints.add(j);
       }
@@ -55,7 +55,7 @@ class OKJointTrack extends OKBehavior {
   }
   
   void bDraw() {
-    println(joints.size());
+    //println(joints.size());
     for (OKJoint jointv : joints) {
       pushStyle();
       //strokeWeight(10);
@@ -72,28 +72,53 @@ class OKJointTrack extends OKBehavior {
   }
 }
 
-class OKJointPairTrack extends OKJointTrack {
+class OKMultiJointTrack extends OKJointTrack {
   OKJoint joint1;
   OKJoint joint2;
 
-  public OKJointPairTrack(int u1, int j1, int u2, int j2) {
-    joint2 = new OKJoint(u1,j1);
-    joint1 = new OKJoint(u2,j2);
+  public OKMultiJointTrack(String s, int u1, int j1, int u2, int j2) {
+    //joint2 = new OKJoint(u1,j1);
+    //joint1 = new OKJoint(u2,j2);
+    addMessage(new OKMultiJointMessager(s,u1,j1,u2,j2));
     //addJoint(joint1);
     //addJoint(joint2);
   }
 
+  void trackJoints() {
+    joints.clear();
+    for (OKMessager m : messages) {
+      joint1 = findJoint(((OKMultiJointMessager) m).getSingleJoint(0));
+      joint2 = findJoint(((OKMultiJointMessager) m).getSingleJoint(1));
+      OKJoint dJoint;
+      if (joint1 != null && joint2 != null) {
+        joints.add(joint1);
+        joints.add(joint2);
+        println("new run");
+        println(joint1.getVector());
+        println(joint2.getVector());
+        PVector d = joint1.getVector().get();
+        d.sub(joint2.getVector());
+        println(d);
+        dJoint = new OKJoint(d,joint1.getUserID(),joint1.getJointID(),1);
+      } else {
+        dJoint = null;
+      }
+      ((OKMultiJointMessager) m).update(dJoint);
+    }
+  }
+
   void bDraw() {
-    /*OKJoint j1 = findJoint(joint1);
-    OKJoint j2 = findJoint(joint2);    
-    if (j1 != null && j2 != null) {
+    if (joint1 != null && joint2 != null) {
       strokeWeight(10);
-      stroke(context.mixUserColorWith(j1.getUserID(), color(255),0.5));
-      PVector j1v = j1.getVector();
-      PVector j2v = j2.getVector();
+      stroke(context.mixUserColorWith(joint1.getUserID(), color(255),0.5));
+      PVector j1v = joint1.getVector();
+      println(j1v);
+      PVector j2v = joint2.getVector();
       line(j1v.x,j1v.y,j1v.z,j2v.x,j2v.y,j2v.z);
+      println(j2v);
     } else {
-    }*/
+      //((OKJointTrack) this).bDraw();
+    }
   }
 }
 

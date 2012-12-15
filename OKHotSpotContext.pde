@@ -50,6 +50,10 @@ class OKHotSpotContext extends SimpleOpenNI {
     myRemoteLocation= new NetAddress("127.0.0.1", 57120); //ip supercollider    
   }
   
+  void setRemote(NetAddress n) {
+    myRemoteLocation = n;
+  }
+  
   void updateKinectOSC() {
     //println(frameRate);
     messages.clear();
@@ -141,7 +145,7 @@ class OKHotSpotContext extends SimpleOpenNI {
         o.add(args);
       }
       b.add(o);
-      println(o);
+      //println(o);
     }
     oscP5.send(b, myRemoteLocation);
   }

@@ -54,6 +54,9 @@ class OKJointMessager extends OKMessager {
   int userID;
   int jointID;
   
+  public OKJointMessager() {
+  }
+  
   public OKJointMessager(String s, int u, int j) {
     super(s);
     userID = u;
@@ -61,19 +64,27 @@ class OKJointMessager extends OKMessager {
   }
   
   void update(OKJoint j) {
+    convertJointToMessage(j);
+  }
+  
+  void convertJointToMessage(OKJoint j) {
     if (j!=null) {
       OscMessage m = newMessage(symbol);
       PVector v = j.getVector();
-      m.add(new float[] {v.x,v.y,v.z,v.mag()});
+      PVector uv = v.get();
+      uv.normalize();
+      m.add(new float[] {v.x,v.y,v.z,uv.x,uv.y,uv.z,v.mag()});
       if(last == null)  {
         sendOnMessage();
-        m.add(new float[] {0.,0.,0.});
+        m.add(new float[] {0.,0.,0.,0.,0.,0.,0.});
       } else {
         PVector l = last.getVector();
         l.sub(v);
-        println(last.getUserID());
-        println(l);
-        m.add(new float[] {l.x,l.y,l.z,l.mag()});
+        PVector ul = l.get();
+        ul.normalize();
+        //println(last.getUserID());
+        //println(l);
+        m.add(new float[] {l.x,l.y,l.z,ul.x,ul.y,ul.z,l.mag()});
       }
       last = j.get();//new OKJoint(new PVector(v.x,v.y,v.z), j.getUserID(), j.getJointId(), j.getConfidence());
       sendMessage(m);
@@ -81,19 +92,42 @@ class OKJointMessager extends OKMessager {
       last = null;
       sendOffMessage();
     }
-  }
+  }  
   
-  OKJoint getJoint() {
-    if(context.isTrackingSkeleton(userID)) {
+  OKJoint getJoint(int uid, int jid) {
+    if(context.isTrackingSkeleton(uid)) {
       PVector j = new PVector();
-      float confidence = context.getJointPositionSkeleton(userID, jointID, j);
-      return new OKJoint(j, userID, jointID, confidence);
+      float confidence = context.getJointPositionSkeleton(uid, jid, j);
+      return new OKJoint(j, uid, jid, confidence);
     }
     return null;  
   }
   
+  OKJoint getSingleJoint() {
+    return getJoint(userID, jointID);
+  }
+  
   void update() {
   }
+}
+
+class OKMultiJointMessager extends OKJointMessager {
+  int[] uid;
+  int[] jid;
+
+  public OKMultiJointMessager(){
+  }
+
+  public OKMultiJointMessager(String s, int u1, int j1, int u2, int j2) {
+    uid = new int[] {u1,u2};
+    jid = new int[] {j1,j2};
+    symbol = s;
+  }
+
+  OKJoint getSingleJoint(int i){
+    return getJoint(uid[i],jid[i]);
+  }
+  
 }
   
 class OKMassMessager extends OKMessager {
@@ -113,8 +147,8 @@ class OKMassMessager extends OKMessager {
     mass = mss;
     density = d;
     if (mass != lastMass || density != lastDensity) {
-      
-      OscMessage m = newMessage();
+      println(symbol);
+      OscMessage m = newMessage(symbol);
       m.add(new int[] {mass, lastMass - mass});
       m.add(new float[] {density, lastDensity - density});
       sendMessage(m);
