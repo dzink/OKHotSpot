@@ -2,6 +2,9 @@ class OKMessager {
   String symbol = "OscMessage";
   String subSymbol = "";
   
+  public OKMessager() {
+  }
+  
   public OKMessager(String s){
     symbol = s;
   }
@@ -12,12 +15,12 @@ class OKMessager {
   }
   
   OscMessage newMessage() {
-    OscMessage o = new OscMessage(symbol);
+    OscMessage o = newMessage("");
     return o;
   }
 
   OscMessage newMessage(String s) {
-    OscMessage o = newMessage();
+    OscMessage o = new OscMessage(s);
     o.setAddrPattern(s);
     return o;
   }
@@ -38,13 +41,8 @@ class OKMessager {
     //sendMessage(m);
   }
   
-  boolean matchMessage(String s) {
-    //println("Does " + s + " match " + symbol);
-    return (symbol.equals(s));
-  }
-  
   void report() {
-    println("New OKMessager: " + symbol);
+    //println("New OKMessager: " + symbol);
   }
 }
 
@@ -53,24 +51,29 @@ class OKJointMessager extends OKMessager {
   
   OKJoint current = new OKJoint();
   OKJoint last;
+  int userID;
+  int jointID;
   
-  public OKJointMessager(String s) {
+  public OKJointMessager(String s, int u, int j) {
     super(s);
+    userID = u;
+    jointID = j;
   }
   
   void update(OKJoint j) {
     if (j!=null) {
-      OscMessage m = newMessage("position");
+      OscMessage m = newMessage(symbol);
       PVector v = j.getVector();
-      m.add(new float[] {v.x,v.y,v.z});
+      m.add(new float[] {v.x,v.y,v.z,v.mag()});
       if(last == null)  {
         sendOnMessage();
         m.add(new float[] {0.,0.,0.});
       } else {
         PVector l = last.getVector();
+        l.sub(v);
         println(last.getUserID());
         println(l);
-        m.add(new float[] {l.x-v.x,l.y-v.y,l.z-v.z});
+        m.add(new float[] {l.x,l.y,l.z,l.mag()});
       }
       last = j.get();//new OKJoint(new PVector(v.x,v.y,v.z), j.getUserID(), j.getJointId(), j.getConfidence());
       sendMessage(m);
@@ -80,10 +83,41 @@ class OKJointMessager extends OKMessager {
     }
   }
   
+  OKJoint getJoint() {
+    if(context.isTrackingSkeleton(userID)) {
+      PVector j = new PVector();
+      float confidence = context.getJointPositionSkeleton(userID, jointID, j);
+      return new OKJoint(j, userID, jointID, confidence);
+    }
+    return null;  
+  }
+  
   void update() {
   }
 }
   
-/*class OKMassMessage extends OKMessage {
- 
-}*/
+class OKMassMessager extends OKMessager {
+  int mass;
+  int lastMass;
+  float density;
+  float lastDensity;
+  
+  public OKMassMessager(String s) {
+    symbol = s;
+  }
+  
+  void update(int mss, float d) {
+    //println("resetting");
+    lastDensity = density;
+    lastMass = mass;
+    mass = mss;
+    density = d;
+    if (mass != lastMass || density != lastDensity) {
+      
+      OscMessage m = newMessage();
+      m.add(new int[] {mass, lastMass - mass});
+      m.add(new float[] {density, lastDensity - density});
+      sendMessage(m);
+    }
+  }
+}

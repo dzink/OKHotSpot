@@ -1,140 +1,22 @@
-class OKJoint {
-  PVector jointv;
-  int userID;
-  int jointID;
-  float confidence;
-  boolean nulled = true;
-  
-  public OKJoint() {
-  }
-  
-  public OKJoint(PVector j, int u, int ji, float c) {
-    jointv = j;
-    userID = u;
-    confidence = c;
-    jointID = ji;
-    nulled = false;
-  }
-
-  public OKJoint(int u, int ji) {
-    jointv = null;
-    userID = u;
-    confidence = 0;
-    jointID = ji;
-    nulled = false;
-  }
-  
-  OKJoint get() {
-    if (jointv != null) {
-      return new OKJoint(jointv.get(),userID,jointID,confidence);
-    } else {
-      return null;
-    }
-  }
-  
-  PVector getVector() {
-    return jointv;
-  }
-  
-  int getUserID() {
-    return userID;
-  }
-  
-  int getJointID() {
-    return jointID;
-  }
-  
-  float getConfidence() {
-    return confidence;
-  }
-
-  boolean isNull() {
-    return nulled;
-  }
-  
-  
-}
-
-
 class OKJointTrack extends OKBehavior {
   //ArrayList<Integer> userIDs = new ArrayList();
   //ArrayList<Integer> joints = new ArrayList();
   //int[] userID = {0};
   //int[] jointID = {OKHotSpotContext.SKEL_RIGHT_HAND};
-  ArrayList<OKJoint> jointSearch = new ArrayList();
+  //ArrayList<OKJoint> jointSearch = new ArrayList();
   ArrayList<OKJoint> joints = new ArrayList();
   //ArrayList<OKJointMessager> messages = new ArrayList();
-  String symbol = "JointTrack";
+  //String symbol = "JointTrack";
 
   public OKJointTrack() {
   }
 
   public OKJointTrack(String s, int u, int j) {
-    symbol = s;
-    addJoint(u,j);
+    //symbol = s;
+    addJoint(s,u,j);
+    //messages.add(new OKJointMessager(s,u,j);
   }
-  
-  OKJoint findJoint(OKJoint j) {
-    return findJoint(j.getUserID(), j.getJointID());
-  }
-  
-  OKJoint findJoint(int u, int j) {
-    for (OKJoint f : joints) {
-      if (f.getUserID() == u && f.getJointID() == j) {
-        return f;
-      }
-    }
-    return null;
-  }
-  
-  OKMessager findJointMessager(int u, int j) {
-    String s = getSymbol(u,j);
-    //println("searching for " + s);
-    for (OKMessager m : messages) {
-      if (m.matchMessage(s)) {
-        return m;
-      }
-    }
-    return null;
-  }
-  
-  String getSymbol(int u, int j) {
-    return symbol + "/User" + Integer.toString(u) + "/Joint" + Integer.toString(j);
-  }
-  
-  void addJoint(int u, int j) {
-    OKJoint jt = new OKJoint(u,j);
-    addMessage(new OKJointMessager(getSymbol(u,j)));
-    jointSearch.add(jt);
-  }
-  
-  void addJoint(OKJoint j) {
-    jointSearch.add(j);
-  }
-  
-  void stopTrackingJoint(int j) {
-    /*int i = joints.indexOf(j);
-    if (i>-1)
-      joints.remove(i);*/
-  }
-  
-  PVector getJointVector(int j, int u) {
-    PVector p = new PVector(0,0,0);
-    context.getJointPositionSkeleton(u, j, p);
-    return p;
-  }
-  
-  void bCheckJoint(int j) {
-  }
-  
-  void bRegisterJoint(int j) {
-  }
-  
-  void addParentHotSpot(OKHotSpot o) {
-    hotspot = o;
-    hotspot.addJointTrack(this);
-  }
-  
+
   boolean isJointTrack() {
     return true;
   }
@@ -143,47 +25,37 @@ class OKJointTrack extends OKBehavior {
     trackJoints();
   }
   
-  void updateJoint(int userID, int jointID) {
-    if(context.isTrackingSkeleton(userID)) {
-      PVector j = new PVector();
-      float confidence = context.getJointPositionSkeleton(userID, jointID, j);
-      j = hotspot.translateToModel(j);
-      OKJointMessager m = (OKJointMessager) findJointMessager(userID, jointID);
-      if (m != null) {
-       if (hotspot.isPointWithin(j)) {
-        OKJoint okj = new OKJoint(j, userID, jointID, confidence);
-        joints.add(okj);
-        if (m != null) { 
-          m.update(okj);
-        };
-        return;
-        } else {
-          //OKJoint okj = new OKJoint(null, userID, jointID, confidence);
-          m.update(null);
-        }
-      }
-    }  
+  OKJoint findJoint(OKJoint j) {
+    //println("searching for joint");
+    if (j != null && hotspot.isPointWithin(hotspot.translateToModel(j.getVector()))) {
+      //println("found joint");
+      j.setVector(hotspot.translateToModel(j.getVector()));
+      //println("translated joint");
+      return j;
+    }
+    return null;
   }
   
   void trackJoints() {
     joints.clear();
-    for(OKJoint j : jointSearch) {
-      int jointID = j.getJointID();
-      int userID = j.getUserID();
-      if(userID != 0) {
-        updateJoint(userID, jointID);
-      } else {
-        IntVector users = context.getUserList();  
-        for(int ui = 0; ui < users.size(); ui++ ) {
-          if (userID == 0 || users.get(ui) == userID) {
-            updateJoint(users.get(ui), jointID);
-          }
-        }
+    for (OKMessager m : messages) {
+      OKJoint j = findJoint(((OKJointMessager) m).getJoint());
+      if(j != null) {
+        joints.add(j);
       }
+      ((OKJointMessager) m).update(j);
     }
+
+  }
+
+  void addJoint(String s, int u, int j) {
+    //OKJoint jt = new OKJoint(u,j);
+    addMessage(new OKJointMessager(s, u, j));
+    //jointSearch.add(jt);
   }
   
   void bDraw() {
+    println(joints.size());
     for (OKJoint jointv : joints) {
       pushStyle();
       //strokeWeight(10);
@@ -207,12 +79,12 @@ class OKJointPairTrack extends OKJointTrack {
   public OKJointPairTrack(int u1, int j1, int u2, int j2) {
     joint2 = new OKJoint(u1,j1);
     joint1 = new OKJoint(u2,j2);
-    addJoint(joint1);
-    addJoint(joint2);
+    //addJoint(joint1);
+    //addJoint(joint2);
   }
 
   void bDraw() {
-    OKJoint j1 = findJoint(joint1);
+    /*OKJoint j1 = findJoint(joint1);
     OKJoint j2 = findJoint(joint2);    
     if (j1 != null && j2 != null) {
       strokeWeight(10);
@@ -221,25 +93,29 @@ class OKJointPairTrack extends OKJointTrack {
       PVector j2v = j2.getVector();
       line(j1v.x,j1v.y,j1v.z,j2v.x,j2v.y,j2v.z);
     } else {
-    }
+    }*/
   }
 }
 
 class OKJointLeadHotSpot extends OKJointTrack {
   OKHotSpot follow;
+  OKJoint joint;
 
   public OKJointLeadHotSpot(int u, int j) {
-    addJoint(u,j);
+    //addJoint(u,j);
+    joint = new OKJoint(u,j);
   }
 
   void setFollow(OKHotSpot f) {
     follow = f;
   }
 
-  void updateJoint(int userID, int jointID) {
+  void trackJoints() {
+    int userID = joint.getUserID();
+    int jointID = joint.getJointID();
     if(context.isTrackingSkeleton(userID)) {
       PVector j = new PVector();
-      float confidence = context.getJointPositionSkeleton(userID, jointID, j);
+      context.getJointPositionSkeleton(userID, jointID, j);
       if (j != null) {
         if (hotspot.isPointWithin(hotspot.translateToModel(j))) {
           follow.setPosition(j.x,j.y,j.z);

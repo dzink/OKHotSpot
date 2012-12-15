@@ -383,25 +383,27 @@ class OKHotSpot
   
   void overlayText(String ot, float x, float y, float z) {
     pushStyle();
-    hint(DISABLE_DEPTH_TEST);
+    //hint(DISABLE_DEPTH_TEST);
     pushMatrix();
     faceFront(x,y,z);
     textAlign(RIGHT,TOP);
     textSize(64);    
     text(ot,0,0,0);
     popMatrix();
-    hint(ENABLE_DEPTH_TEST);
+    //hint(ENABLE_DEPTH_TEST);
     popStyle();
   }
   
   void overlayEllipse(float r, float x, float y, float z) {
     pushStyle();
-    hint(DISABLE_DEPTH_TEST);
+    //hint(DISABLE_DEPTH_TEST);
     pushMatrix();
     faceFront(x,y,z);
     ellipse(0,0,r,r);
+    strokeWeight(4);
+    point(0,0,0);
     popMatrix();
-    hint(ENABLE_DEPTH_TEST);
+    //hint(ENABLE_DEPTH_TEST);
     popStyle();
   }
   

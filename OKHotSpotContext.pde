@@ -15,8 +15,9 @@ class OKHotSpotContext extends SimpleOpenNI {
   int pointDistance = 6;
   float cloudWeight = 3;
   boolean fullOscMessage = false;
+  boolean showBackground = false;
   
-  color[] userColors = { color(170,0), color(105,194,212), color(194,177,205), color(238,103,79), color(255,248,62), color(120,0,255) };
+  color[] userColors = { color(170,0), color(55,104,212), color(205,55,205), color(238,103,79), color(255,248,62), color(120,0,255) };
 
 
   OscP5 oscP5;
@@ -92,7 +93,7 @@ class OKHotSpotContext extends SimpleOpenNI {
     boolean drawnFlag;
     for (int i = 0; i < depthPoints.length; i+=pointDistance) {
       PVector currentPoint = depthPoints[i];
-      if (userMap[i] >0) {
+      if (userMap[i] >0 || showBackground) {
         drawnFlag = false;
         for(OKHotSpot hot : hotspots) {
           if(hot.isFastPointWithin(currentPoint)) {
@@ -131,7 +132,7 @@ class OKHotSpotContext extends SimpleOpenNI {
     for(OscMessage o : messages) {
       //oscP5.send(hot.sendOSC(), myRemoteLocation);
       //hot.sendMessages();
-      if(!fullOscMessage) {
+      if(!fullOscMessage && false) {
         Object[] args = o.arguments();
         o.clearArguments();
         String[] tokens = o.addrPattern().split("[/]+");
@@ -213,6 +214,14 @@ class OKHotSpotContext extends SimpleOpenNI {
     cameraPosition = cameraMatrix.mult(new PVector(0,0,0), cameraPosition);
   }
   
+  void toggleBackground() {
+    if (showBackground) {
+      showBackground = false;
+    } else {
+      showBackground = true;
+    }
+  }
+  
     
   color getUserColor(int userID) {
     return userColors[userID % 6];
@@ -227,11 +236,11 @@ class OKHotSpotContext extends SimpleOpenNI {
   }
   
   void increaseCloudWeight() {
-    cloudWeight += 0.5;
+    cloudWeight ++;
   }
 
   void decreaseCloudWeight() {
-    cloudWeight -= 0.5;
+    cloudWeight --;
   }
   
   int getPointDistance() {
@@ -290,6 +299,9 @@ void keyPressed() {
     break;
     case 45: case 109:
       context.decreaseCloudWeight();
+    break;
+    case 83: 
+      context.toggleBackground();
     break;
   }
 }

@@ -1,6 +1,16 @@
 class OKMassDetect extends OKBehavior {
-  
   int mass = 0;
+  
+  public OKMassDetect() {
+  }
+  
+  public OKMassDetect(String s) {
+    addMessage(s);
+  }
+  
+  void addMessage(String s) {
+    messages.add(new OKMassMessager(s));
+  }
   
   boolean checkMass(PVector p, color pixel, int userID) {
     if (hotspot.isPointWithin(p)) {
@@ -29,6 +39,9 @@ class OKMassDetect extends OKBehavior {
   }
   
   void update() {
+    for(OKMessager m : messages) {
+      ((OKMassMessager) m).update(mass,hotspot.massScaleForPosition(mass));
+    }
     mass = 0;
   }
   
@@ -41,6 +54,10 @@ class OKMassDetect extends OKBehavior {
 class OKMassEdge extends OKMassDetect {
 
   float edge = 0.95;
+
+  public OKMassEdge(String s) {
+    addMessage(s);
+  }
   
   boolean checkMass(PVector p, color pixel, int userID) {
     if (hotspot.isPointWithin(p) && hotspot.isPointWithinEdge(p, edge)) {
@@ -63,9 +80,15 @@ class OKMassScanner extends OKMassDetect {
   
   OKScanner scanner;
   
+  public OKMassScanner(String s) {
+    addMessage(s);
+  }
+  
   void setScanner(OKScanner s) {
     scanner = s;
   }
+  
+  
   
   // PVector in real-world coordinates
   boolean checkMass(PVector p, color pixel, int userID) {
